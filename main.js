@@ -4,8 +4,38 @@ const ctx = canvas.getContext("2d");
 const CELL_SIZE = 20; //varje ruta på spelplanen är 20x20px, snake moves one square at time.
 const GRID_SIZE = 25; //25x25 squares
 
-// Creating a square for testing
-ctx.fillStyle = "green";
-ctx.fillRect(10 * CELL_SIZE, 10 * CELL_SIZE, CELL_SIZE, CELL_SIZE); //Creating a new square. Position 10 is 200px from left.
+//Where the snake starts.
+let snake = {
+  x: 12, //column 12
+  y: 12, // Line 12
+};
 
-console.log("Game has started");
+// Direction the snake is moving -> right
+let direction = {
+  x: 1, // +1 = right, -1 = left => 0 no movement.
+  y: 0, // +1 = down, -1 = up => 0 no movement.
+};
+
+function drawSnake() {
+  ctx.fillStyle = "green";
+  ctx.fillRect(snake.x * CELL_SIZE, snake.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+}
+
+function update() {
+  // Update snake position based on direction
+  snake.x += direction.x;
+  snake.y += direction.y;
+}
+
+// Main game loop
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+
+  update(); // Update snake position
+  drawSnake(); // Draw the snake
+
+  setTimeout(gameLoop, 200); // Call gameLoop every 200ms and go to next one.
+}
+gameLoop();
+
+console.log("Game started");
