@@ -1,0 +1,27 @@
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: #1a1a1a;
+  color: whitesmoke;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+#game-container {
+  text-align: center;
+}
+
+#game-canvas {
+  border: 3px solid #4caf50;
+  background-color: #000;
+  display: block;
+  margin: 20px auto;
+}
+
+#score {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4caf50;
+}
