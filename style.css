@@ -7,6 +7,10 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  /* font-family: Helvetica, sans-serif; */
+  font-family: "Press Start 2P", system-ui;
+  font-weight: 400;
+  font-style: normal;
 }
 
 #game-container {
@@ -24,4 +28,22 @@ body {
   font-size: 24px;
   font-weight: bold;
   color: #4caf50;
+}
+
+#restart {
+  background-color: #f04747;
+  color: whitesmoke;
+  padding: 10px;
+  font-size: 1.2rem;
+  border: none;
+  border-radius: 5px;
+  margin: 5px;
+  font-family: "Press Start 2P", system-ui;
+  font-style: normal;
+}
+
+#restart:hover {
+  background-color: #4caf50;
+  color: whitesmoke;
+  cursor: pointer;
 }
