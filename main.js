@@ -4,6 +4,8 @@ const ctx = canvas.getContext("2d");
 const CELL_SIZE = 20;
 const GRID_SIZE = 25;
 
+let score = 0;
+
 // Where the snake starts
 let snake = [
   { x: 12, y: 12 },
@@ -84,6 +86,7 @@ function update() {
       { x: 11, y: 12 },
     ];
     direction = { x: 1, y: 0 };
+    score = 0;
     console.log("BOOM! The snake hit the wall!");
     return; // Stop updating for this tick
   }
@@ -99,7 +102,9 @@ function update() {
       { x: 11, y: 12 },
     ];
     direction = { x: 1, y: 0 };
+    score = 0; //Reset score.
     console.log("Ooops! Snake bit itself!💥");
+    return;
   }
 
   // Add new head to the front of the Array
@@ -107,8 +112,11 @@ function update() {
 
   // Check if snake eats food
   if (newHead.x === food.x && newHead.y === food.y) {
+    score += 10; // +10p every apple.
+    updateUI();
+
     console.log("YUM! Snake ate the apple! 🍎");
-    console.log(`Snake length: ${snake.length}`);
+    console.log(`Snake length: ${snake.length} | Score: ${score}`);
     spawnFood();
     // Don't remove tail = snake grows!
   } else {
@@ -121,9 +129,9 @@ function update() {
 function updateUI() {
   const scoreElement = document.getElementById("score");
   if (isGameRunning) {
-    scoreElement.textContent = "Points: 0 | ▶️ PLAYING";
+    scoreElement.textContent = `POINTS: ${score} | ▶️ PLAYING`;
   } else {
-    scoreElement.textContent = "Points: 0 | ⏸️ PAUSED";
+    scoreElement.textContent = `POINTS: ${score} | ⏸️ PAUSED`;
   }
 }
 

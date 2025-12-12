@@ -30,20 +30,50 @@ body {
   color: #4caf50;
 }
 
-#restart {
-  background-color: #f04747;
-  color: whitesmoke;
-  padding: 10px;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 5px;
-  margin: 5px;
-  font-family: "Press Start 2P", system-ui;
-  font-style: normal;
+#button-container {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
-#restart:hover {
+button {
+  font-family: "Press Start 2P", monospace;
+  font-size: 16px;
+  padding: 15px 30px;
+  border: 3px solid #4caf50;
+  background-color: #000;
+  color: #4caf50;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+button:hover {
+  background-color: #4caf50;
+  color: #000;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+#start-btn {
+  border-color: #4caf50;
+  color: #4caf50;
+}
+
+#start-btn:hover {
   background-color: #4caf50;
   color: whitesmoke;
-  cursor: pointer;
+}
+
+#restart-btn {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+
+#restart-btn:hover {
+  background-color: #ff4444;
+  color: #000;
 }
