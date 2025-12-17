@@ -94,7 +94,7 @@ export class Snake {
   }
 
   // Check if snake hits walls
-  checkWallColision(gridSize) {
+  checkWallCollision(gridSize) {
     const head = this.getHead();
     return head.x < 0 || head.x >= gridSize || head.y < 0 || head.y >= gridSize;
   }

@@ -69,10 +69,16 @@ export class Game {
   start() {
     if (this.isRunning) return; // If already running
 
-    this.isRunning.true;
+    this.isRunning = true;
     this.updateUI();
-    this.gameLoopId();
     console.log("GAME STARTED");
+    this.gameLoop();
+  }
+
+  pause() {
+    this.isRunning = false;
+    this.updateUI();
+    console.log("Game PAUSED");
   }
 
   reset() {
@@ -86,7 +92,7 @@ export class Game {
     this.food.spawn();
 
     this.draw();
-    thisupdateUI();
+    this.updateUI();
 
     console.log(" GAME RESET");
   }
@@ -103,7 +109,7 @@ export class Game {
   update() {
     this.snake.move();
 
-    if (this.snake.checkWallColision(this.gridSize)) {
+    if (this.snake.checkWallCollision(this.gridSize)) {
       this.handleDeath("BOOM! Snake hit the wall!");
       return;
     }

@@ -8,13 +8,17 @@ export class Food {
   }
 
   spawn() {
-    this.position.x = Math.floor(Math.random() * this.gridSize);
-    this.position.y = Math.floor(Math.random() * this.gridSize);
-    console.log(`Apple spwaned at x:${this.position.x}, y:${this.position.y}`);
+    this.position = {
+      x: Math.floor(Math.random() * this.gridSize),
+      y: Math.floor(Math.random() * this.gridSize),
+    };
+    console.log(
+      `🍎 Apple spawned at x:${this.position.x}, y:${this.position.y}`
+    );
   }
 
   draw() {
-    this.ctx.fillstyle = "red";
+    this.ctx.fillStyle = "red";
     this.ctx.fillRect(
       this.position.x * this.cellSize,
       this.position.y * this.cellSize,
@@ -22,7 +26,7 @@ export class Food {
       this.cellSize
     );
   }
-  get position() {
+  getPosition() {
     return this.position;
   }
 }
