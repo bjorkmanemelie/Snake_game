@@ -13,6 +13,9 @@ export class Game {
     this.isRunning = false;
     this.score = 0;
     this.tickRate = 200; //seconds between updates
+    this.baseTickRate = 200;
+    this.speedIncreaseInterval = 30;
+    this.minTickRate = 50;
     this.gameLoopId = null;
 
     // Game objects
@@ -28,11 +31,32 @@ export class Game {
 
   setupControls() {
     document.addEventListener("keydown", this.handleKeyPress);
+
     document.getElementById("start-btn").addEventListener("click", () => {
       this.start();
     });
+
     document.getElementById("restart-btn").addEventListener("click", () => {
       this.reset();
+    });
+
+    // Help button
+    document.getElementById("help-btn").addEventListener("click", () => {
+      this.showHelp();
+    });
+
+    const modal = document.getElementById("help-modal");
+    const closeBtn = document.querySelector(".close");
+
+    closeBtn.addEventListener("click", () => {
+      this.hideHelp();
+    });
+
+    // Close if clicking outside modal
+    window.addEventListener("click", (e) => {
+      if (e.target === modal) {
+        this.hideHelp();
+      }
     });
   }
 
@@ -84,6 +108,7 @@ export class Game {
   reset() {
     this.isRunning = false;
     this.score = 0;
+    this.tickRate = this.baseTickRate; // Reset speed
 
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -130,10 +155,19 @@ export class Game {
 
   // When snake eats food
   handleFoodEaten() {
+    const oldScore = this.score; // ⭐ Spara gamla poängen FÖRST
     this.score += 10;
     this.snake.grow();
     this.food.spawn();
     this.updateUI();
+
+    // Check if we should increase speed
+    const oldLevel = Math.floor(oldScore / this.speedIncreaseInterval);
+    const newLevel = Math.floor(this.score / this.speedIncreaseInterval);
+
+    if (newLevel > oldLevel) {
+      this.increaseSpeed();
+    }
 
     console.log(
       `YUM! 🍎 | Length: ${this.snake.getLength()} | Score: ${this.score}`
@@ -173,5 +207,30 @@ export class Game {
       clearTimeout(this.gameLoopId);
     }
     document.removeEventListener("keydown", this.handleKeyPress);
+  }
+
+  // Increase game speed
+  increaseSpeed() {
+    if (this.tickRate > this.minTickRate) {
+      this.tickRate = Math.max(this.minTickRate, this.tickRate - 20);
+      console.log(`🚀 SPEED UP! New tick rate: ${this.tickRate}ms`);
+    }
+  }
+
+  // Show help box
+  showHelp() {
+    const modal = document.getElementById("help-modal");
+    modal.style.display = "block";
+
+    // Pause game if running
+    if (this.isRunning) {
+      this.pause();
+    }
+  }
+
+  // Hide help box
+  hideHelp() {
+    const modal = document.getElementById("help-modal");
+    modal.style.display = "none";
   }
 }
