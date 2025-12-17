@@ -9,7 +9,6 @@ export class Game {
     this.cellSize = cellSize;
 
     // Game state
-
     this.isRunning = false;
     this.score = 0;
     this.tickRate = 200; //seconds between updates
@@ -114,7 +113,7 @@ export class Game {
 
     // Reset game objects
     this.snake.reset(12, 12);
-    this.food.spawn();
+    this.food = new Food(this.gridSize, this.cellSize, this.ctx); // Skapa nytt Food-objekt
 
     this.draw();
     this.updateUI();
@@ -144,11 +143,9 @@ export class Game {
       return;
     }
 
-    // Check food collision
+    // Check food collisionss
     const head = this.snake.getHead();
-    const foodPos = this.food.getPosition();
-
-    if (head.x === foodPos.x && head.y === foodPos.y) {
+    if (this.food.checkCollision(head)) {
       this.handleFoodEaten();
     }
   }
@@ -158,8 +155,13 @@ export class Game {
     const oldScore = this.score;
     this.score += 10;
     this.snake.grow();
-    this.food.spawn();
     this.updateUI();
+
+    // Spawn extra apple when user hits 100p
+    if (this.score === 100) {
+      this.food.spawn();
+      console.log("🎉 100 POÄNG! Extra äppel spawnat!");
+    }
 
     // Check if we should increase speed
     const oldLevel = Math.floor(oldScore / this.speedIncreaseInterval);
