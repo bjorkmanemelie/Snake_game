@@ -155,7 +155,7 @@ export class Game {
 
   // When snake eats food
   handleFoodEaten() {
-    const oldScore = this.score; // ⭐ Spara gamla poängen FÖRST
+    const oldScore = this.score;
     this.score += 10;
     this.snake.grow();
     this.food.spawn();
