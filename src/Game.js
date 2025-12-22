@@ -1,5 +1,7 @@
 import { Snake } from "./Snake.js";
 import { Food } from "./Food.js";
+import { MultiplayerManager } from "./MultiplayerManager.js";
+import { Scoreboard } from "./Scoreboard.js";
 
 export class Game {
   constructor(canvas, gridSize = 25, cellSize = 20) {
@@ -17,6 +19,9 @@ export class Game {
     this.minTickRate = 50;
     this.gameLoopId = null;
 
+    this.isMultiplayer = false;
+    this.multiplayerManager = null;
+
     // Game objects
     this.snake = new Snake(12, 12, this.cellSize, this.ctx);
     this.food = new Food(this.gridSize, this.cellSize, this.ctx);
@@ -25,6 +30,7 @@ export class Game {
 
     this.handleKeyPress = this.handleKeyPress.bind(this);
 
+    this.scoreboard = new Scoreboard();
     this.setupControls();
   }
 
@@ -57,9 +63,38 @@ export class Game {
         this.hideHelp();
       }
     });
+
+    const scoreboardBtn = document.getElementById("scoreboard-btn");
+    if (scoreboardBtn) {
+      scoreboardBtn.addEventListener("click", () => {
+        this.showScoreboard();
+      });
+    }
+
+    const closeScoreboard = document.querySelector(".close-scoreboard");
+    if (closeScoreboard) {
+      closeScoreboard.addEventListener("click", () => {
+        this.hideScoreboard();
+      });
+    }
+
+    const clearScoresBtn = document.getElementById("clear-scores-btn");
+    if (clearScoresBtn) {
+      clearScoresBtn.addEventListener("click", () => {
+        if (confirm("Clear all high scores?")) {
+          this.scoreboard.clearScores();
+          this.scoreboard.renderScoreboard("scoreboard-list");
+        }
+      });
+    }
   }
 
   handleKeyPress(e) {
+    const menu = document.getElementById("multiplayer-menu");
+    if (menu && menu.style.display !== "none") {
+      return; // Ignore keyboard when menu is visible
+    }
+
     if (e.code === "Space") {
       if (!this.isRunning) {
         this.start();
@@ -143,10 +178,22 @@ export class Game {
       return;
     }
 
+    if (this.isMultiplayer && this.multiplayerManager) {
+      const head = this.snake.getHead();
+      if (this.multiplayerManager.checkCollisionWithOpponent(head)) {
+        this.handleDeath("💥 Hit opponent's snake!");
+        return;
+      }
+    }
+
     // Check food collisionss
     const head = this.snake.getHead();
     if (this.food.checkCollision(head)) {
       this.handleFoodEaten();
+    }
+
+    if (this.isMultiplayer && this.multiplayerManager) {
+      this.multiplayerManager.sendGameState();
     }
   }
 
@@ -179,6 +226,17 @@ export class Game {
   // Happenes when snake dies
   handleDeath(message) {
     console.log(message);
+
+    if (this.score > 0 && this.scoreboard.isHighScore(this.score)) {
+      const playerName = prompt(
+        "🎉 NEW HIGH SCORE! Enter your name:",
+        "Player"
+      );
+      if (playerName !== null) {
+        this.scoreboard.saveScore(playerName, this.score);
+        alert(`Score saved: ${this.score} points!`);
+      }
+    }
     this.reset();
   }
 
@@ -186,6 +244,10 @@ export class Game {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.food.draw();
     this.snake.draw();
+
+    if (this.isMultiplayer && this.multiplayerManager) {
+      this.multiplayerManager.drawOpponentSnake(this.ctx, this.cellSize);
+    }
   }
 
   updateUI() {
@@ -233,6 +295,72 @@ export class Game {
   // Hide help box
   hideHelp() {
     const modal = document.getElementById("help-modal");
+    modal.style.display = "none";
+  }
+
+  // ⭐ MULTIPLAYER METHODS
+
+  enableMultiplayer() {
+    this.isMultiplayer = true;
+    this.multiplayerManager = new MultiplayerManager(this);
+  }
+
+  async hostMultiplayerGame() {
+    this.enableMultiplayer();
+    const sessionId = await this.multiplayerManager.hostGame();
+    return sessionId;
+  }
+
+  async joinMultiplayerGame(sessionId, playerName) {
+    this.enableMultiplayer();
+    await this.multiplayerManager.joinGame(sessionId, playerName);
+    this.start(); // Join starts immediately
+  }
+
+  onOpponentJoined() {
+    console.log("🎮 Both players ready! Starting game...");
+    document.getElementById("waiting-text").textContent =
+      "✅ Opponent joined! Starting...";
+    setTimeout(() => {
+      this.start();
+    }, 1000);
+  }
+
+  leaveMultiplayerGame() {
+    this.pause();
+
+    if (this.multiplayerManager) {
+      this.multiplayerManager.leaveGame();
+    }
+
+    this.isMultiplayer = false;
+    this.multiplayerManager = null;
+
+    // Show menu again
+    document.getElementById("multiplayer-menu").style.display = "block";
+    document.getElementById("game-canvas").style.display = "none";
+    document.getElementById("button-container").style.display = "none";
+    document.getElementById("session-info").style.display = "none";
+    document.getElementById("leave-btn").style.display = "none";
+
+    this.reset();
+  }
+
+  // Show scoreboard modal
+  showScoreboard() {
+    const modal = document.getElementById("scoreboard-modal");
+    this.scoreboard.renderScoreboard("scoreboard-list");
+    modal.style.display = "block";
+
+    // Pause game if running
+    if (this.isRunning) {
+      this.pause();
+    }
+  }
+
+  // Hide scoreboard modal
+  hideScoreboard() {
+    const modal = document.getElementById("scoreboard-modal");
     modal.style.display = "none";
   }
 }

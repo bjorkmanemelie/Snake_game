@@ -15,13 +15,36 @@
 <body>
     <div id="game-container">
         <h1>SNAKE GAME</h1>
-        <canvas id="game-canvas" width="500" height="500"></canvas>
+
+        <!-- Multiplayer menu (visas först) -->
+        <div id="multiplayer-menu" class="menu">
+            <h2>🎮 Choose Mode</h2>
+            <button id="singleplayer-btn" class="mode-btn">SINGLE PLAYER</button>
+            <button id="host-btn" class="mode-btn">HOST MULTIPLAYER</button>
+            <div id="join-section">
+                <input type="text" id="session-input" placeholder="Enter Session Code" maxlength="6">
+                <input type="text" id="player-name-input" placeholder="Your Name" maxlength="15" value="Player">
+                <button id="join-btn" class="mode-btn">JOIN GAME</button>
+            </div>
+            <div id="session-info" style="display: none;">
+                <p>Session Code:</p>
+                <p><strong id="session-code">---</strong></p>
+                <p id="waiting-text">⏳ Waiting for opponent...</p>
+            </div>
+        </div>
+
+
+        <canvas id="game-canvas" width="500" height="500" style="display: none;"></canvas>
+
         <div id="score">Points</div>
 
-        <div id="button-container">
+
+        <div id="button-container" style="display: none;">
             <button id="start-btn">Start</button>
             <button id="restart-btn">Restart</button>
             <button id="help-btn">How to play</button>
+            <button id="scoreboard-btn">HIGH SCORES</button>
+            <button id="leave-btn" style="display: none;">LEAVE GAME</button>
         </div>
     </div>
 
@@ -43,18 +66,34 @@
                 <h3>⚠️ GAME OVER IF:</h3>
                 <p>• Snake hits the wall</p>
                 <p>• Snake bites itself</p>
+                <p>• Snake hits opponent (multiplayer)</p>
 
                 <h3>🚀 DIFFICULTY</h3>
                 <p>Speed increases every 30 points!</p>
+
+                <h3>🌐 MULTIPLAYER</h3>
+                <p>• HOST: Create game and share code</p>
+                <p>• JOIN: Enter code to play together</p>
+                <p>• Green snake = You</p>
+                <p>• Red snake = Opponent</p>
 
                 <h3>💡 TIP</h3>
                 <p>Plan your moves ahead - you can't reverse 180°!</p>
             </div>
         </div>
     </div>
+    <div id="scoreboard-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-scoreboard">&times;</span>
+            <h2>🏆 HIGH SCORES</h2>
+            <div id="scoreboard-list">
+                <p style="text-align: center; color: #4CAF50;">No scores yet! Play to set a record!</p>
+            </div>
+            <button id="clear-scores-btn" class="clear-btn">Clear All</button>
+        </div>
+    </div>
 
     <script src="main.js" type="module"></script>
-
 </body>
 
 </html>
